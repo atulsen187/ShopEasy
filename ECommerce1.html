@@ -1,0 +1,134 @@
+//<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title style="background-color: rgb(12, 211, 78);">E-Commerce Website</title>
+    <style>
+        img {
+            width: 250px;
+            height: 200px;
+        }
+
+        #container {
+            /* border: 10px solid rebeccapurple; */
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto;
+            padding: 10px;
+            margin: 10px;
+            gap: 20px;
+        }
+
+        #container  div {
+            padding: 10px;
+            margin: 10px;
+            box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>E-Commerce Website</h1>
+    <input type="text" name="" id="search" oninput="search()" placeholder=" Product Search ...">
+    <select name="" id="sort" onchange="sort()">
+    <option value="">Select</option>
+    <option value="asc">asc</option>
+    <option value="dsc">dsc</option>
+</select>
+    <div id="container"></div>
+</body>
+
+</html>
+
+<script>
+    let beg=[]
+    let cart=JSON.parse(localStorage.getItem("cart")) || [];
+    fetch("https://fakestoreapi.com/products")
+        .then(res => res.json())
+        .then(data => {
+            beg=data;
+           // console.log(data)
+            dispalyCart(data)
+        })
+        .catch(err => console.log(err))
+
+    function dispalyCart(arr) {
+        document.querySelector("#container").innerText="";
+        arr.forEach((el) => {
+            let box = document.createElement("div");
+
+            let img1 = document.createElement("img")
+            img1.setAttribute("src", el.image)
+
+            let title = document.createElement("h1")
+            title.innerText = el.title
+
+            let description = document.createElement("h2")
+            description.innerText = el.description
+
+            let price = document.createElement("button")
+            price.innerText = el.price
+
+            
+
+            let category = document.createElement("p")
+            category.innerText = el.category
+
+            let button = document.createElement("button")
+            button.innerText = el.rating.rate
+
+            let add=document.createElement("button")
+            add.innerText ="Add to cart";
+
+            add.addEventListener("click",function(){
+                cart.push(el);
+                localStorage.setItem("cart",JSON.stringify(cart));
+            })
+
+
+
+            box.append(img1, title, description, price, category, button,add)
+
+            document.querySelector("#container").append(box)
+        })
+    }
+
+    function search(){
+        //console.log("hi");
+        let query =document.querySelector("#search").value;
+        console.log(query);
+        let searchData=beg.filter((el)=>{
+            return el.title.toLowerCase().includes(query.toLowerCase())
+        })
+    
+        dispalyCart(searchData)
+        console.log(searchData)
+    }
+
+    function sort(){
+        let query=document.querySelector("#sort").value;
+        console.log(query);
+        if(query=="asc"){
+            let sortedData= beg.sort((a,b)=>a.price-b.price)
+        dispalyCart(sortedData)
+    }else if(query=="dsc"){
+        let sortedData=beg.sort((b,a)=>a.price-b.price)
+        dispalyCart(sortedData)
+    }
+    
+    }
+</script>
+<!-- {
+    "id": 1,
+    "title": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
+    "price": 109.95,
+    "description": "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
+    "category": "men's clothing",
+    "image": "https://fakestoreapi.com/img/81fPKd-2AYL.AC_SL1500.jpg",
+    "rating": {
+        "rate": 3.9,
+        "count": 120
+    } -->
+<!-- api is an asynchronous -->
